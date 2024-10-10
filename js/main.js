@@ -1,4 +1,5 @@
 import { validate } from './validation.js';
+import { displayFeedback } from './utils.js';
 
 const processFile = () => {
     const fileInput = document.getElementById('fileInput');
@@ -19,10 +20,6 @@ const processFile = () => {
     reader.readAsText(file);
 }
 
-const displayFeedback = (message) => {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerText = `Message: ${message}`;
-}
 
 const triggerRobotWalk = (input) => {
     const lines = input.trim().split('\n');
@@ -34,18 +31,17 @@ const triggerRobotWalk = (input) => {
 
     const obstacles = [];
     for (let i = 1; i <= numberOfObstacles; i++) {
-        obstacles.push(lines[i]);
+        obstacles.push(lines[i].replace(/\r?\n|\r/g, ''));
     }
-
     let x = 0, y = 0;
     let direction = 0; 
     let maxDistance = 0;
 
     for (let i = numberOfObstacles + 1; i < lines.length; i++) {
         const command = lines[i];
-        if (command === 'L') {
+        if (command.indexOf('L') >= 0) {
             direction = (direction - 1 + 4) % 4;
-        } else if (command === 'R') {
+        } else if (command.indexOf('R') >= 0) {
             direction = (direction + 1) % 4;
         } else if (command.startsWith('M')) {
             const steps = parseInt(command.split(' ')[1]);
