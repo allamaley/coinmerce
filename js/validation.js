@@ -1,3 +1,5 @@
+import { displayFeedback } from './utils.js';
+
 export const validate = (numberOfObstacles, numberOfCommands, linesAmount) => {
     if (isNaN(numberOfObstacles) || isNaN(numberOfCommands)) {
         displayFeedback('header not properly formatted');
