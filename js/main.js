@@ -1,5 +1,5 @@
 import { validate } from './validation.js';
-import { displayFeedback } from './utils.js';
+import { displayFeedback, isObstacleAt } from './utils.js';
 
 const processFile = () => {
     const fileInput = document.getElementById('fileInput');
@@ -22,6 +22,7 @@ const processFile = () => {
 
 
 const triggerRobotWalk = (input) => {
+    let currentTime = 0;
     const lines = input.trim().split('\n');
     const header = lines[0].split(' ');
     const numberOfObstacles = parseInt(header[0]);
@@ -33,6 +34,8 @@ const triggerRobotWalk = (input) => {
     for (let i = 1; i <= numberOfObstacles; i++) {
         obstacles.push(lines[i].replace(/\r?\n|\r/g, ''));
     }
+
+    console.log( {obstacles} )
     let x = 0, y = 0;
     let direction = 0; 
     let maxDistance = 0;
@@ -53,13 +56,15 @@ const triggerRobotWalk = (input) => {
                     case 2: newY--; break;
                     case 3: newX--; break;
                 }
-                if (!obstacles.includes(`${newX} ${newY}`)) {
+                // if (!obstacles.includes(`${newX} ${newY}`)) {
+                if (!isObstacleAt(newX, newY, currentTime, obstacles)) {
                     x = newX;
                     y = newY;
                     maxDistance = Math.max(maxDistance, Math.sqrt(x*x + y*y));
                 }
             }
         }
+        currentTime++;
     }
 
     return maxDistance;
