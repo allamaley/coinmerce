@@ -24,7 +24,7 @@ const processFile = () => {
 
 const triggerRobotWalk = (input) => {
   let currentTime = 0;
-  const robots = [new Robot(1, 0, 0), new Robot(2, 5, 5)];
+  const robots = [new Robot(1, 0, 0, 0)];
   const lines = input.trim().split("\n");
   const header = lines[0].split(" ");
   const numberOfObstacles = parseInt(header[0]);
@@ -36,9 +36,9 @@ const triggerRobotWalk = (input) => {
   for (let i = 1; i <= numberOfObstacles; i++) {
     const formattedObstacleLine = lines[i].replace(/\r?\n|\r/g, "");
 
-    const [x1, y1, t1, t2] = formattedObstacleLine.split(" ").map(Number);
+    const [x, y, z, t1, t2] = formattedObstacleLine.split(" ").map(Number);
 
-    let newObstacle = new Obstacle(x1, y1, t1, t2);
+    let newObstacle = new Obstacle(x, y, z, t1, t2);
     obstacles.push(newObstacle);
   }
   console.log({ obstacles });
@@ -46,20 +46,39 @@ const triggerRobotWalk = (input) => {
   for (let robot of robots) {
     for (let i = numberOfObstacles + 1; i < lines.length; i++) {
       const command = lines[i];
-      if (command.indexOf("L") >= 0) {
-        robot.rotateLeft();
-      } else if (command.indexOf("R") >= 0) {
-        robot.rotateRight();
-      } else if (command.startsWith("M")) {
-        const steps = parseInt(command.split(" ")[1]);
 
-        for (let j = 0; j < steps; j++) {
+      const [action, value] = command.split(" ");
+      const angle = parseInt(value);
+
+      switch (action) {
+        case "L":
+          robot.turn(-angle);
+          break;
+        case "R":
+          robot.turn(angle);
+          break;
+        case "U":
+          robot.pitch(angle);
+          break;
+        case "D":
+          robot.pitch(-angle);
+          break;
+        case "RL":
+          robot.roll(-angle);
+          break;
+        case "RR":
+          robot.roll(angle);
+          break;
+        case "M":
           robot.move(
             obstacles,
             robots.filter((r) => r.id !== robot.id),
-            currentTime
+            currentTime,
+            value
           );
-        }
+          break;
+        default:
+          console.error(`Unknown command: ${command}`);
       }
       currentTime++;
     }

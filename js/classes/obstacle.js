@@ -1,7 +1,8 @@
 export class Obstacle {
-    constructor(x, y, startTime, endTime) {
+    constructor(x, y, z, startTime, endTime) {
         this.x = x;
         this.y = y;
+        this.z = z;
         this.startTime = startTime;
         this.endTime = endTime;
     }
